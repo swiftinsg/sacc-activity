@@ -1,24 +1,16 @@
-//
-//  AddPointsView.swift
-//  jiachen group fun
-//
-//  Created by Kai Quan Tay on 18/11/23.
-//
-
 import SwiftUI
 
 struct AddPointsView: View {
     @Binding var groups: [ActivityGroup]
 
     @State private var pointsToAdd: [String: Int] = [:]
-
-    @State private var filterByAdding: Bool = false
+    @State private var filterByAdding = false
 
     var body: some View {
         VStack {
             ScrollView(.vertical) {
                 VStack {
-                    ForEach(shownGroups, id: \.groupName) { group in
+                    ForEach(shownGroups) { group in
                         GroupBox {
                             HStack {
                                 HStack {
@@ -28,10 +20,15 @@ struct AddPointsView: View {
                                 }
                                 .containerRelativeFrame(.horizontal, count: 5, span: 2, spacing: 0)
                                 .padding(.trailing, 20)
+
                                 HStack {
-                                    TextField("", value: bindingPointsToAdd(for: group.groupName), formatter: pointsFormatter)
-                                        .multilineTextAlignment(.leading)
-                                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                                    TextField(
+                                        "Points",
+                                        value: bindingPointsToAdd(for: group.groupName),
+                                        formatter: pointsFormatter
+                                    )
+                                    .multilineTextAlignment(.leading)
+                                    .textFieldStyle(.roundedBorder)
 
                                     Button("+100") {
                                         withAnimation {
@@ -53,15 +50,13 @@ struct AddPointsView: View {
 
             Button {
                 withAnimation {
-                    groups = groups.map { addingPoints(to: $0) }
+                    groups = groups.map(addingPoints)
                     pointsToAdd = [:]
                     filterByAdding = false
                 }
             } label: {
-                HStack {
-                    Text("Add Points to ^[\(pointsToAdd.values.filter({ $0 != 0 }).count) Group](inflect: true)")
-                }
-                .frame(maxWidth: .infinity)
+                Text("Apply Points to ^[\(editedGroupCount) Group](inflect: true)")
+                    .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
         }
@@ -72,45 +67,50 @@ struct AddPointsView: View {
             } label: {
                 Image(systemName: "line.3.horizontal.decrease.circle" + (filterByAdding ? ".fill" : ""))
             }
+            .accessibilityLabel(filterByAdding ? "Show all groups" : "Show edited groups")
         }
     }
 
-    var shownGroups: [ActivityGroup] {
+    private var shownGroups: [ActivityGroup] {
         guard filterByAdding else { return groups }
-
-        return groups.filter {
-            (pointsToAdd[$0.groupName] ?? 0) != 0
-        }
+        return groups.filter { pointsToAdd[$0.groupName, default: 0] != 0 }
     }
 
-    var pointsFormatter: some Formatter {
+    private var editedGroupCount: Int {
+        pointsToAdd.values.filter { $0 != 0 }.count
+    }
+
+    private var pointsFormatter: NumberFormatter {
         let formatter = NumberFormatter()
         formatter.numberStyle = .none
         return formatter
     }
 
-    func bindingPointsToAdd(for groupName: String) -> Binding<Int> {
-        .init {
-            pointsToAdd[groupName] ?? 0
+    private func bindingPointsToAdd(for groupName: String) -> Binding<Int> {
+        Binding {
+            pointsToAdd[groupName, default: 0]
         } set: { newValue in
             pointsToAdd[groupName] = newValue
         }
     }
 
-    func add(points: Int, to groupName: String) {
-        pointsToAdd[groupName] = (pointsToAdd[groupName] ?? 0) + points
+    private func add(points: Int, to groupName: String) {
+        pointsToAdd[groupName, default: 0] += points
     }
 
-    func addingPoints(to group: ActivityGroup) -> ActivityGroup {
-        var mutableGroup = group
-        mutableGroup.points += (pointsToAdd[group.groupName] ?? 0)
-
-        return mutableGroup
+    private func addingPoints(to group: ActivityGroup) -> ActivityGroup {
+        var updatedGroup = group
+        updatedGroup.points += pointsToAdd[group.groupName, default: 0]
+        return updatedGroup
     }
 }
 
 #Preview {
     AddPointsView(groups: .constant((1...9).map {
-        ActivityGroup(groupName: "Group \($0)", points: .random(in: 1...40) * 100)
+        ActivityGroup(
+            groupId: "group-\($0)",
+            groupName: "Group \($0)",
+            points: .random(in: 1...40) * 100
+        )
     }))
 }

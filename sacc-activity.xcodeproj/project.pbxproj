@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1D2547FA2F6776BE00B6A08F /* Discord.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1D2547F92F6776BE00B6A08F /* Discord.plist */; };
+		320484983098B3E40095E5B2 /* GroupName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 320484973098B3E40095E5B2 /* GroupName.swift */; };
 		3221C2232D87374800F8084A /* NIO in Frameworks */ = {isa = PBXBuildFile; productRef = 3221C2222D87374800F8084A /* NIO */; };
 		3221C2252D87374800F8084A /* NIOConcurrencyHelpers in Frameworks */ = {isa = PBXBuildFile; productRef = 3221C2242D87374800F8084A /* NIOConcurrencyHelpers */; };
 		3221C2272D87374800F8084A /* NIOCore in Frameworks */ = {isa = PBXBuildFile; productRef = 3221C2262D87374800F8084A /* NIOCore */; };
@@ -60,6 +61,7 @@
 
 /* Begin PBXFileReference section */
 		1D2547F92F6776BE00B6A08F /* Discord.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Discord.plist; sourceTree = "<group>"; };
+		320484973098B3E40095E5B2 /* GroupName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupName.swift; sourceTree = "<group>"; };
 		324E1EB02B06793400E57028 /* PresentationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentationView.swift; sourceTree = "<group>"; };
 		324E1EB52B067AC300E57028 /* ActivityTitlePresentationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityTitlePresentationView.swift; sourceTree = "<group>"; };
 		324E1EB72B067BC900E57028 /* SectionPresentationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionPresentationView.swift; sourceTree = "<group>"; };
@@ -190,6 +192,7 @@
 				32F84EAF2B01E6D10068BFE6 /* Assets.xcassets */,
 				32F84EB42B01E6D10068BFE6 /* sacc_activity.entitlements */,
 				32F84EB12B01E6D10068BFE6 /* Preview Content */,
+				320484973098B3E40095E5B2 /* GroupName.swift */,
 			);
 			path = "sacc-activity";
 			sourceTree = "<group>";
@@ -310,6 +313,7 @@
 				324E1ED02B06F25800E57028 /* ReviewPresentationGroupView.swift in Sources */,
 				327129DA2B03E794001CE562 /* ActivitySceneDashboardView.swift in Sources */,
 				327129D02B025CBE001CE562 /* DiscordManager+SlashCommands.swift in Sources */,
+				320484983098B3E40095E5B2 /* GroupName.swift in Sources */,
 				324E1EBC2B067E7600E57028 /* StatementPresentationView.swift in Sources */,
 				327129CC2B025614001CE562 /* DiscordManager.swift in Sources */,
 				327129D62B03DC82001CE562 /* AppIdeaActivityScene.swift in Sources */,

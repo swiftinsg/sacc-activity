@@ -9,8 +9,7 @@ import SwiftUI
 
 @main
 struct sacc_activityApp: App {
-    
-    @StateObject var discordManager = DiscordManager()
+    @StateObject private var discordManager = DiscordManager()
     
     var body: some Scene {
         WindowGroup {
@@ -18,9 +17,16 @@ struct sacc_activityApp: App {
                 .preferredColorScheme(.dark)
                 .environmentObject(discordManager)
         }
+
+        WindowGroup(id: "am-leaderboard") {
+            FlagRaisingLeaderboardPresentationView(groupRange: .am)
+                .preferredColorScheme(.dark)
+                .environmentObject(discordManager)
+        }
         
-        WindowGroup(id: "presentation-view") {
-            PresentationView()
+        WindowGroup(id: "pm-leaderboard") {
+            FlagRaisingLeaderboardPresentationView(groupRange: .pm)
+                .preferredColorScheme(.dark)
                 .environmentObject(discordManager)
         }
     }

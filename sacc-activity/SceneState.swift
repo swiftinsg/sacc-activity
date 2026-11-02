@@ -90,11 +90,12 @@ struct Submission {
 }
 
 struct ActivityGroup: Identifiable {
-    var id: String { groupName }
-    
+    var id: String { groupId }
+
+    let groupId: String
     var groupName: String
     var flagURL: URL?
-    
+
     var points = 0
 }
 

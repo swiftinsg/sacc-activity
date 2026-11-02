@@ -16,10 +16,6 @@ struct ClosingActivityScene: ActivityScene {
         EmptyView()
     }
     
-    func createCommands() -> [Command]? {
-        return nil
-    }
-    
     var scenes: [ActivitySubscene] = [
         ActivitySubscene(systemImage: "flag", title: "Closing", state: .statement("We hope you had fun!")),
         ActivitySubscene(systemImage: "1.circle", title: "One more thing", state: .statement("One more thing…")),

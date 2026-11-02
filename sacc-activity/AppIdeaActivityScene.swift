@@ -7,7 +7,6 @@
 
 import Foundation
 import SwiftUI
-import DiscordBM
 
 struct AppIdeaActivityScene: ActivityScene {
     
@@ -16,17 +15,6 @@ struct AppIdeaActivityScene: ActivityScene {
     
     var body: some View {
         EmptyView()
-    }
-    
-    func createCommands() -> [Command]? {
-        [
-            Command(name: "story",
-                    description: "Submit a story for the Swift Story Scribbling.",
-                    options: [.init(type: .string,
-                                    name: "idea",
-                                    description: "Describe your story!",
-                                    required: true)])
-        ]
     }
     
     var scenes: [ActivitySubscene] = [

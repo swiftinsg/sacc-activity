@@ -8,53 +8,122 @@
 import SwiftUI
 
 struct FlagRaisingLeaderboardPresentationView: View {
-    
-    @EnvironmentObject var discordManager: DiscordManager
-    
-    var sortedGroups: [ActivityGroup] {
-        Array(discordManager.activityGroups.sorted(by: { $0.points > $1.points }))
+    enum GroupRange: String {
+        case am
+        case pm
+        case all
     }
-    
-    var namespace: Namespace.ID
-    
+
+    @EnvironmentObject private var discordManager: DiscordManager
+
+    let groupRange: GroupRange
+
+    var totalAMPoints: Int {
+        discordManager.activityGroups
+            .filter { $0.groupId.hasSuffix("am") }
+            .reduce(0) { $0 + $1.points }
+    }
+
+    var totalPMPoints: Int {
+        discordManager.activityGroups
+            .filter { $0.groupId.hasSuffix("pm") }
+            .reduce(0) { $0 + $1.points }
+    }
+
+    private var sortedGroups: [ActivityGroup] {
+        discordManager.activityGroups
+            .filter { group in
+                switch groupRange {
+                case .am:
+                    group.groupId.hasSuffix("am")
+                case .pm:
+                    group.groupId.hasSuffix("pm")
+                case .all:
+                    true
+                }
+            }
+            .sorted { $0.points > $1.points }
+    }
+
     var body: some View {
         VStack {
-            ForEach(Array(sortedGroups.enumerated()), id: \.element.groupName) { (index, group) in
-                let size = sizeFor(rank: index)
-                
-                HStack {
-                    HStack {
-                        Text("\(index+1)")
-                            .monospaced()
-                            .frame(width: 100)
-                        
-                        if let trophy = trophyFor(rank: index) {
-                            Image(systemName: trophy)
-                                .padding(.trailing, 10)
-                        }
+            let total = totalAMPoints + totalPMPoints
+            
+            GeometryReader { reader in
+                HStack(spacing: 0) {
+                    if total < 1 {
+                        Rectangle()
+                            .fill(.yellow)
+                            .frame(width: reader.size.width / 2)
+                    } else {
+                        Rectangle()
+                            .fill(.yellow)
+                            .frame(width: (Double(totalAMPoints) / Double(total)) * reader.size.width)
                     }
-                    .font(.system(size: size*0.8))
-                    
-                    Text(group.groupName)
-                        .matchedGeometryEffect(id: "\(group).name", in: namespace)
                     Spacer()
-                    Text("\(group.points)")
-                        .contentTransition(.numericText())
-                        .matchedGeometryEffect(id: "\(group).points", in: namespace)
                 }
-                .bold()
-                .font(.system(size: size))
-                .frame(height: size*1.7)
-                .foregroundStyle(colorFor(rank: index))
+                .frame(height: 48)
+                .background(.orange)
+                .overlay {
+                    HStack {
+                        Text("Morning (\(totalAMPoints))")
+                            .foregroundStyle(.black)
+                        Spacer()
+                        Text("(\(totalPMPoints)) Afternoon")
+                            .foregroundStyle(.white)
+                    }
+                    .font(.system(size: 32, weight: .medium))
+                    .padding(.horizontal, 24)
+                }
+            }
+            .frame(height: 48)
+            .padding(.top, 48)
+            
+            HStack {
+                ForEach(Array(sortedGroups.enumerated()), id: \.element.id) { index, group in
+                    Rectangle()
+                        .fill(.clear)
+                        .overlay {
+                            VStack {
+                                Spacer()
+                                Image(group.groupId)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .colorInvert()
+                                    .frame(maxWidth: 200, maxHeight: 200)
+                                    .overlay(alignment: .bottom) {
+                                        PhaseAnimator([1.0, 0.8, 1.1, 0.9]) { otherPhase in
+                                            PhaseAnimator([Color.red, Color.yellow, Color.orange]) { phase in
+                                                Image(systemName: "flame")
+                                                    .font(.system(size: 64))
+                                                    .rotationEffect(.degrees(180))
+                                                    .offset(y: 64)
+                                                    .foregroundStyle(phase)
+                                            }
+                                            .scaleEffect(otherPhase)
+                                        }
+                                    }
+                                    .offset(y: -Double(group.points) / 3)
+                                Text("\(group.points)")
+                                    .font(.system(size: 18, weight: .medium))
+                                Text(group.groupName)
+                                    .font(.system(size: 18, weight: .bold))
+                                    .multilineTextAlignment(.center)
+                                    .frame(height: 150, alignment: .top)
+                            }
+                        }
+                }
             }
         }
-        .padding(95)
+        .padding(.horizontal, 95)
+        .frame(width: 1920, height: 1080)
         .background {
             Color.primary.colorInvert()
         }
+        .navigationTitle("\(groupRange.rawValue)")
     }
     
-    func sizeFor(rank: Int) -> Double {
+    private func sizeFor(rank: Int) -> Double {
         switch rank {
         case 0: 70 // first place
         case 1: 55 // second place
@@ -63,7 +132,7 @@ struct FlagRaisingLeaderboardPresentationView: View {
         }
     }
     
-    func colorFor(rank: Int) -> Color {
+    private func colorFor(rank: Int) -> Color {
         switch rank {
         case 0: Color.yellow // first place
         case 1: Color.gray // second place
@@ -72,11 +141,16 @@ struct FlagRaisingLeaderboardPresentationView: View {
         }
     }
     
-    func trophyFor(rank: Int) -> String? {
+    private func trophyFor(rank: Int) -> String? {
         switch rank {
         case 0: "trophy.fill" // first place
         case 1, 2: "medal.fill" // second, third place
         default: nil // everything else
         }
     }
+}
+
+#Preview {
+    FlagRaisingLeaderboardPresentationView(groupRange: .all)
+        .environmentObject(DiscordManager())
 }

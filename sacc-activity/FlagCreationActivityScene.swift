@@ -7,7 +7,6 @@
 
 import Foundation
 import SwiftUI
-import DiscordBM
 
 struct FlagCreationActivityScene: ActivityScene {
     
@@ -16,17 +15,6 @@ struct FlagCreationActivityScene: ActivityScene {
     
     var body: some View {
         EmptyView()
-    }
-    
-    func createCommands() -> [Command]? {
-        [
-            Command(name: "flag",
-                    description: "Submit a flag for Group Flag activity.",
-                    options: [.init(type: .attachment,
-                                    name: "image",
-                                    description: "Submit your group’s flag image!",
-                                    required: true)])
-        ]
     }
     
     var scenes: [ActivitySubscene] = [
