@@ -116,7 +116,7 @@ struct FlagRaisingLeaderboardPresentationView: View {
             }
         }
         .padding(.horizontal, 95)
-        .frame(width: 1920, height: 1080)
+//        .frame(width: 1920, height: 1080)
         .background {
             Color.primary.colorInvert()
         }
